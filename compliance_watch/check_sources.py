@@ -56,11 +56,13 @@ VAT_RATE_SOURCES = [
         "url": "https://www.bundesfinanzministerium.de/Web/DE/Themen/Steuern/Steuerarten/Umsatzsteuer/umsatzsteuer.html",
         "source_type": "official_tax_rate",
     },
-    {
+        {
         "id": "VAT_NL_Official",
         "country": "Netherlands",
         "title": "Belastingdienst - Btw-tarieven (荷蘭稽徵機關 BTW稅率頁)",
-        "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/tarieven_en_vrijstellingen/btw_tarieven",
+        # 2026-10-04更新：原本的URL（結尾多了/btw_tarieven）已經失效（404），
+        # 改用這個確認可正常載入、且明確寫出21%一般稅率的頁面。
+        "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/tarieven_en_vrijstellingen/",
         "source_type": "official_tax_rate",
     },
 ]
