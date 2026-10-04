@@ -23,6 +23,7 @@ VeloGuard 跨境電商法規合規決策系統 - Streamlit 視覺化前端介面
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from typing import Any, Optional
@@ -128,6 +129,28 @@ def get_retriever():
         "sentence_transformer" 或 "local_lsa_fallback"。
     """
     return load_retriever_with_auto_fallback(str(KNOWLEDGE_BASE_PATH), verbose=False)
+
+
+@st.cache_resource(show_spinner=False)
+def get_kb_freshness_info() -> dict[str, Any]:
+    """讀取知識庫JSON中的 `last_updated` 欄位，供頁面顯示「資料最後驗證日期」badge。
+
+    這個欄位由 compliance_watch/ 每週自動檢查流程搭配人工審核PR合併時更新
+    （或維護者手動更新），用來讓使用者知道目前看到的法規/稅率資訊是何時
+    最後確認過的，而不是誤以為「網址是活的=資料永遠最新」。
+
+    讀取失敗（檔案不存在、欄位缺失等）時回傳空字串而非拋出例外，
+    避免因為這個非核心功能而讓整個頁面無法啟動。
+    """
+    try:
+        with open(KNOWLEDGE_BASE_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+        return {
+            "last_updated": data.get("last_updated", ""),
+            "countries_included": data.get("countries_included", []),
+        }
+    except (OSError, json.JSONDecodeError):
+        return {"last_updated": "", "countries_included": []}
 
 
 # ---------------------------------------------------------------------------
@@ -411,6 +434,17 @@ def main() -> None:
         f"目前市場：{params['market_label']}　｜　"
         f"知識庫chunk總數：{len(retriever.chunks)}"
     )
+
+    kb_freshness = get_kb_freshness_info()
+    last_updated = kb_freshness.get("last_updated", "")
+    if last_updated:
+        st.caption(
+            f"🕓 資料最後驗證日期：**{last_updated}**　"
+            "（本系統每週自動檢查官方稅率/法規/品牌政策來源是否有更新，"
+            "AI草擬變動後仍須人工審核才會反映於此日期）"
+        )
+    else:
+        st.caption("🕓 資料最後驗證日期：未提供（知識庫檔案缺少 `last_updated` 欄位）")
 
     if embed_mode == "local_lsa_fallback":
         st.warning(
