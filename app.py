@@ -476,7 +476,10 @@ def main() -> None:
     st.subheader("🔎 合規檢索查詢")
 
     if "query_text" not in st.session_state:
-        st.session_state.query_text = PRESET_QUERIES[0]["query"]
+        # 預設留白，不預先帶入任何情境文字——避免使用者誤以為框內已經是
+        # 「範例答案」，只要直接點搜尋就好，而忽略了要自己輸入真正的問題。
+        # 真正的引導文字改用下方 placeholder（淺灰色提示字）呈現。
+        st.session_state.query_text = ""
 
     st.caption("快速情境（點擊自動帶入查詢框）：")
     preset_cols = st.columns(len(PRESET_QUERIES))
@@ -484,9 +487,22 @@ def main() -> None:
         if col.button(preset["label"], use_container_width=True):
             st.session_state.query_text = preset["query"]
 
-    st.text_area("自然語言查詢", key="query_text", height=90)
+    st.text_area(
+        "自然語言查詢",
+        key="query_text",
+        height=160,
+        placeholder=(
+            "請在這裡描述您遇到的實際情況或想詢問的問題，系統會自動比對相關法規與政策。\n\n"
+            "例如：「3500歐元的E-Bike已經落地騎乘試用，消費者現在要求退貨，能扣多少折舊費？」\n"
+            "或：「客製化塗裝車款可以辦理退貨嗎？」"
+        ),
+    )
 
     search_clicked = st.button("🚀 開始合規檢索", type="primary")
+
+    if search_clicked and not st.session_state.query_text.strip():
+        st.warning("請先在上方查詢框輸入您的問題，或點擊上方的快速情境按鈕帶入範例。")
+        search_clicked = False
 
     # -----------------------------------------------------------------
     # 執行檢索並顯示結果（存入session_state，避免頁面互動時結果消失）
