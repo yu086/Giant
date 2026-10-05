@@ -286,7 +286,7 @@ class VeloGuardHybridRetriever:
         """依國家與（可選的）品類，過濾出候選chunk子集。
 
         Args:
-            target_country: "DE" 或 "NL"。
+            target_country: "DE"、"NL" 或 "FR"。
             product_type: 品類篩選條件，若提供則僅保留
                 `product_scope == "All"` 或 `product_scope == product_type`
                 的chunk；若為 None 則不做品類過濾。
@@ -448,7 +448,7 @@ class VeloGuardHybridRetriever:
 
         Args:
             query: 使用者的自然語言查詢（可為中文）。
-            target_country: 目標市場國家代碼，"DE" 或 "NL"。
+            target_country: 目標市場國家代碼，"DE"、"NL" 或 "FR"。
             product_type: 品類篩選條件（如 "E_Bike"），預設不篩選。
             top_k: 回傳結果數量上限，預設 5。
             alpha: Dense分數權重，`Final = alpha*Dense + (1-alpha)*BM25`，預設 0.5。
