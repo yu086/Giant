@@ -63,6 +63,12 @@ MARKETS: dict[str, dict[str, Any]] = {
         "vat_label": "BTW（荷蘭增值稅）",
         "depreciation_label": "Waardevermindering（價值減損）",
     },
+    "🇫🇷 法國 (France - 20% TVA)": {
+        "code": "FR",
+        "vat_rate": 0.20,
+        "vat_label": "TVA（法國增值稅）",
+        "depreciation_label": "Dépréciation（價值減損）",
+    },
 }
 
 # 品類篩選選項 -> 傳給 retriever.search(product_type=...) 的值
@@ -90,6 +96,7 @@ TOPIC_LABELS: dict[str, str] = {
 JURISDICTION_LABELS: dict[str, str] = {
     "DE_EU": "🇩🇪 德國",
     "NL_EU": "🇳🇱 荷蘭",
+    "FR_EU": "🇫🇷 法國",
     "EU": "🇪🇺 全歐盟共通",
     "COMMON_EU": "🇪🇺 全歐盟共通",
 }
@@ -400,17 +407,16 @@ def render_vat_calculator(market: dict[str, Any]) -> None:
 
         st.markdown(f"**當前市場：** {market['code']}（VAT/BTW = {vat_rate:.0%}）")
 
-        c1, c2 = st.columns(2)
-        c1.metric("原訂單不含稅淨額", f"€{net_amount_original:,.2f}")
-        c2.metric(market["vat_label"], f"€{order_amount - net_amount_original:,.2f}")
-
-        c3, c4 = st.columns(2)
-        c3.metric(
+        # 側邊欄寬度有限，metric 卡片放進 2 欄 columns 容易把貨幣數值截斷
+        # （欄位太窄、長數字會被壓縮甚至省略），因此這裡改為單欄直向堆疊，
+        # 確保每個數值都能完整顯示。
+        st.metric("原訂單不含稅淨額", f"€{net_amount_original:,.2f}")
+        st.metric(market["vat_label"], f"€{order_amount - net_amount_original:,.2f}")
+        st.metric(
             f"折舊扣除（{market['depreciation_label']}）",
             f"-€{depreciation_amount:,.2f}",
         )
-        c4.metric("退款中對應VAT金額", f"€{refund_vat:,.2f}")
-
+        st.metric("退款中對應VAT金額", f"€{refund_vat:,.2f}")
         st.metric("💰 最終應退還買家款項", f"€{refund_gross:,.2f}")
 
 

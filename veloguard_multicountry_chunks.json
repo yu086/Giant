@@ -1,14 +1,14 @@
 {
   "system": "VeloGuard 跨境合規決策系統",
   "version": "multi_country_v1",
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-10-05",
   "countries_included": [
     "Germany",
-    "Netherlands"
+    "Netherlands",
+    "France"
   ],
   "countries_pending": [
     "Sweden",
-    "France",
     "Poland",
     "Spain",
     "Italy"
@@ -16,11 +16,13 @@
   "schema_note": "每個chunk新增 country 欄位以利Python篩選；其餘欄位沿用各國原始schema（部分欄位如vat_rate、source_type、is_duplicate_of、conflict_flag等非所有chunk都有，讀取時建議用 .get() 取值避免KeyError）",
   "companies": {
     "Germany": "GIANT Deutschland GmbH",
-    "Netherlands": "Giant Benelux B.V."
+    "Netherlands": "Giant Benelux B.V.",
+    "France": "Giant France (SARL, RCS Aix-en-Provence 343 804 274)"
   },
   "vat_rates": {
     "Germany": null,
-    "Netherlands": 0.21
+    "Netherlands": 0.21,
+    "France": 0.2
   },
   "source_pages": {
     "Germany": [
@@ -102,6 +104,39 @@
         "url": "https://wetten.overheid.nl/BWBR0005289",
         "source_type": "official_law_text",
         "note": "荷蘭民法典遠距契約消費者撤回權專章，屬強制規範（dwingend recht）；本知識庫引用之細部條號（如6:230s lid 3、6:230p sub f/g/i、6:230v lid 1）經AI（Gemini）二次查證取得，尚未由人工逐字核對官方條文原文，建議正式上線前由法律專業或親自查證wetten.overheid.nl確認"
+      }
+    ],
+    "France": [
+      {
+        "id": "Giant_FR_CGV",
+        "title": "Conditions Générales de Vente en Ligne (CGV)",
+        "url": "https://www.giant-bicycles.com/fr/termsconditions",
+        "source_type": "brand_policy",
+        "note": "自動化工具在本沙盒環境中被robots.txt/網路限制擋下無法直接抓取，內容由使用者2026-10-05人工開啟頁面後逐段複製提供，版本標註日期為2025/10/07。"
+      },
+      {
+        "id": "ServicePublic_Retractation",
+        "title": "Vente à distance : droit de rétractation (service-public.gouv.fr)",
+        "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10485",
+        "source_type": "government_guidance"
+      },
+      {
+        "id": "DGCCRF_Retractation",
+        "title": "Vente à distance : tout savoir sur votre droit de rétractation (DGCCRF)",
+        "url": "https://www.economie.gouv.fr/particuliers/mes-droits-conso/bien-consommer/vente-distance-tout-savoir-sur-votre-droit-de-retractation",
+        "source_type": "government_guidance"
+      },
+      {
+        "id": "DGCCRF_DelaisReflexion",
+        "title": "Délais de réflexion ou de rétractation : comment s'appliquent-ils ? (DGCCRF fiche pratique)",
+        "url": "https://www.economie.gouv.fr/dgccrf/les-fiches-pratiques/les-delais-de-reflexion-ou-de-retractation",
+        "source_type": "government_guidance"
+      },
+      {
+        "id": "Economie_TVA_Taux",
+        "title": "TVA : quels sont les taux de votre quotidien ? (法國增值稅稅率)",
+        "url": "https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mes-autres-impots-et-taxes/tva-quels-sont-les-taux-de-votre-quotidien",
+        "source_type": "government_guidance"
       }
     ]
   },
@@ -884,6 +919,79 @@
       "operational_rule": "客服計算全額退貨應退還的運費時，可依訂單金額對照此費率表（低於€50退€4.50運費，€50以上運費本為€0無須退還）。",
       "is_duplicate_of": null,
       "country": "Netherlands"
+    },
+    {
+      "chunk_id": "Giant_FR_CGV_001",
+      "topic": "withdrawal_period",
+      "product_scope": "All",
+      "jurisdiction": "FR_EU",
+      "vat_rate": 0.2,
+      "source_type": "brand_policy",
+      "source_page": "Giant_FR_CGV",
+      "official_article_ref": "CGV ARTICLE 7 - DROIT DE RETRACTATION (renvoyant au Code de la consommation art. L.221-18 et suivants)",
+      "original_text_snippet": "Conformément aux dispositions de l'article 221-18 et suivants du Code de la consommation, le Client dispose d'un délai de quatorze jours francs pour exercer son droit de rétractation, sans avoir à fournir de motif, en renvoyant au Giant Store le formulaire type disponible ici ou au moyen d'une déclaration dénuée d'ambiguïté (...). Le délai de rétractation court à compter de la réception par le Client du Produit à l'adresse de livraison indiquée lors de la commande ou de son retrait dans le Giant Store.",
+      "summary_zh": "消費者享有14「清全天」(jours francs)的撤回權，無須說明理由，可用制式表單或任何明確聲明（如email）行使。期限自客戶實際收到商品（或於Giant Store取貨）之日起算。",
+      "operational_rule": "客服應受理客戶於收到商品後14天內以任何明確方式（含Email、信件或官方表單）表達的撤回意願，並以收貨日為起算基準，不得以口頭聲明不夠正式為由拒絕受理。",
+      "is_duplicate_of": null,
+      "country": "France"
+    },
+    {
+      "chunk_id": "Giant_FR_CGV_002",
+      "topic": "withdrawal_period",
+      "product_scope": "All",
+      "jurisdiction": "FR_EU",
+      "vat_rate": 0.2,
+      "source_type": "brand_policy",
+      "source_page": "Giant_FR_CGV",
+      "official_article_ref": "CGV ARTICLE 7 - DROIT DE RETRACTATION（退款期限與方式）",
+      "original_text_snippet": "Au plus tard dans les quatorze jours francs suivant la communication de sa décision de se rétracter à Giant, le Client s'engage à restituer ou à renvoyer le (ou les) produits(s) commandé(s)... le remboursement interviendra au plus tard dans les quatorze jours francs à compter de la date à laquelle Giant France a été informé de la décision du Client de se rétracter. Le Client reconnait et accepte toutefois que Giant France pourra différer le remboursement jusqu'à récupération du (ou des) Produit(s)... En tout état de cause, le remboursement n'occasionnera pas de frais pour le Client.",
+      "summary_zh": "客戶通知撤回後須於14清全天內寄回商品；Giant則須於得知撤回決定後14清全天內退款，但可延後至實際收到退貨商品或收到寄送證明為止（以先發生者為準）。退款方式比照原付款方式，且不得向消費者收取任何退款手續費。",
+      "operational_rule": "客服應明確告知客戶：寄回商品與Giant退款皆以14天為上限，但Giant實際撥款可能等到收到退貨或物流簽收證明才會執行，須設定對應的客訴追蹤提醒，避免逾期未退款引發客訴。",
+      "is_duplicate_of": null,
+      "country": "France"
+    },
+    {
+      "chunk_id": "Giant_FR_CGV_003",
+      "topic": "return_logistics_cost",
+      "product_scope": "All",
+      "jurisdiction": "FR_EU",
+      "vat_rate": 0.2,
+      "source_type": "brand_policy",
+      "source_page": "Giant_FR_CGV",
+      "official_article_ref": "CGV ARTICLE 7 - DROIT DE RETRACTATION（退貨運費負擔）",
+      "original_text_snippet": "Il est expressément convenu que les frais de renvoi des Produits commandés sont à la charge exclusive du client.",
+      "summary_zh": "CGV明文約定：退貨寄回運費由消費者全額自行負擔，Giant不吸收此筆費用。",
+      "operational_rule": "客服應依CGV明確告知消費者退貨運費自付；因此條款已於購買前透過CGV充分揭露（符合DGCCRF對運費負擔須『事前告知』之要求），客服可直接依條款執行，無需比照Giant_FR_CGV_004的覆蓋處理方式。",
+      "is_duplicate_of": null,
+      "country": "France"
+    },
+    {
+      "chunk_id": "Giant_FR_CGV_004",
+      "topic": "value_depreciation",
+      "product_scope": "All",
+      "jurisdiction": "FR_EU",
+      "vat_rate": 0.2,
+      "source_type": "brand_policy",
+      "source_page": "Giant_FR_CGV",
+      "official_article_ref": "CGV ARTICLE 7 - DROIT DE RETRACTATION（商品返還狀態要求）",
+      "original_text_snippet": "le Client s'engage à restituer ou à renvoyer le (ou les) produits(s) commandé(s) neuf et en parfait état de fonctionnement au Giant Store",
+      "summary_zh": "CGV字面要求消費者必須將商品以「全新(neuf)且功能完美(parfait état de fonctionnement)」狀態退回，條款全文並未提及任何折舊扣款機制，也未說明消費者可合理拆封/試用的範圍。",
+      "brand_stated_rule": "商品須以「全新且功能完美」狀態退回，字面上未提供任何折舊/部分減損退款的中間地帶，若按字面最嚴格解讀，商品只要曾被使用（如試乘）即可能被認定不符合退回要求。",
+      "legal_minimum_standard": "依Code de la consommation L.221-23條原則（經DGCCRF官方「délais de réflexion ou de rétractation」實務頁查證），撤回權完全失效的例外情形僅限於法規封閉列舉的特定類別（如衛生密封商品、已拆封軟體/影音商品等），一般商品（含自行車）並不在此例外清單內；消費者可比照實體店面進行合理檢驗與試用（含拆封、功能測試），商家僅能就『超出必要檢驗範圍之操作』造成的實質減損主張扣款，不得僅因商品「已使用/非全新」一概拒絕退款或主張撤回權失效。",
+      "applied_rule": "legal_minimum_standard",
+      "override_reason": "依法國消費法典強制規範原則，企業條款不得將消費者的法定撤回權利訂得比法律標準更嚴格；CGV若被解讀為「只要非全新即拒絕受理撤回」，將與L.221-23條之折舊原則及DGCCRF官方列舉的狹義例外清單不符，可能構成對消費者不利的無效條款。",
+      "conflict_flag": "Giant FR CGV Article 7要求商品退回須「neuf et en parfait état de fonctionnement」，字面上未區分『合理試用後的輕微磨損』與『真正不可逆的嚴重損傷』，可能被第一線誤用為『只要騎乘試用過就拒絕退貨』，與L.221-23條之折舊原則存在解讀落差。此分析基於Claude查證DGCCRF官方頁面（確認撤回權失效例外為封閉列舉清單，不含一般商品磨損）與trustedshops.fr法律部落格（說明L.221-23折舊原則）交叉比對所得，尚未經法國消保法專業人士最終覆核，亦未能直接取得Légifrance官方逐字條文（該網域對自動化工具回傳403禁止存取）。",
+      "verification_status": "conflict_found_cross_verified_ai_only_pending_legal_review",
+      "verification_sources": [
+        "DGCCRF官方fiche pratique「Les délais de réflexion ou de rétractation」",
+        "economie.gouv.fr「Vente à distance : tout savoir sur votre droit de rétractation」",
+        "trustedshops.fr法律部落格（引述Code de la consommation L.221-23條原則，非官方法源原文）"
+      ],
+      "verification_date": "2026-10-05",
+      "action_required": "建議通知Giant France法務部門，釐清Article 7「neuf et en parfait état de fonctionnement」的實際執行標準是否已內含折舊扣款配套流程（僅CGV文字未揭露），並建議於系統正式上線前，由熟悉法國消保法（Code de la consommation）的法律專業人士直接取得Légifrance官方L.221-23條逐字條文覆核，取代目前依賴的二手法律部落格來源。",
+      "operational_rule": "【客服執行標準，非依CGV字面】法國消費者退回已合理試用（含短程試乘以確認商品功能/尺寸是否合適）之商品，客服不得僅以「商品非全新」為由直接拒絕退貨。應受理退貨申請，並僅針對明顯超出合理檢驗範圍的實質損傷（如車架刮傷、零件損壞）評估是否收取對應減損賠償，其餘金額全額退還；此判斷應留存記錄，註明係依法國消保法最低標準處理，而非逕依CGV「neuf」字面規定執行。",
+      "is_duplicate_of": null,
+      "country": "France"
     }
   ],
   "conflict_reports": [
@@ -901,6 +1009,21 @@
       "recommended_system_behavior": "override_to_legal_standard",
       "lesson_learned": "AI交叉驗證法律文件時，必須逐字比對原文，防止AI在查證過程中『修正』或簡化原始爭議文字，導致驗證結果失去意義。",
       "country": "Netherlands"
+    },
+    {
+      "report_id": "FR_Conflict_001",
+      "related_chunk": "Giant_FR_CGV_004",
+      "issue": "Giant法國CGV Article 7規定消費者須將商品以「neuf et en parfait état de fonctionnement」(全新且功能完美)狀態退回，但未提供任何折舊扣款或合理試用範圍的說明，字面上可能被誤用為『商品一旦使用過即拒絕退貨』。",
+      "verification_process": [
+        "1. 查證DGCCRF官方fiche pratique「Les délais de réflexion ou de rétractation」，確認撤回權失效的例外情形是封閉列舉清單（衛生密封商品、已拆封軟體/影音等），一般商品（含自行車）不在例外清單內",
+        "2. 查證economie.gouv.fr「Vente à distance : tout savoir sur votre droit de rétractation」官方頁，確認退貨運費負擔原則與撤回權基本框架",
+        "3. 查證trustedshops.fr法律部落格對Code de la consommation L.221-23條「商品價值減損」原則的說明：消費者可比照實體店面合理試用，商家僅能對超出必要檢驗範圍之操作求償，此為二手來源，非官方法源原文",
+        "4. 嘗試直接查證legifrance.gouv.fr官方條文原文（L.221-23），因該網域對自動化工具回傳403禁止存取，未能取得逐字官方條文，此部分仍待人工查證"
+      ],
+      "conclusion": "中信心度認定Giant FR CGV Article 7「neuf et en parfait état」之表述與法國消保法折舊原則存在解讀落差，建議系統採用法律最低標準（合理試用後僅就實質減損扣款）而非條款字面（非全新即拒絕受理），細部法條原文建議正式使用前由人工/法律專業覆核legifrance官方條文。",
+      "recommended_system_behavior": "override_to_legal_standard",
+      "lesson_learned": "與荷蘭案例相同：品牌條款的『概括性字面規定』若未明確區分合理試用與過度使用，容易被第一線誤解為『一旦使用就喪失權利』，查證時應優先尋找官方監管機關（本案為DGCCRF）對『例外情形是否為封閉列舉』的明確說法，而非僅依賴條款本身的措辭。",
+      "country": "France"
     }
   ],
   "excluded_sources": {
@@ -931,6 +1054,12 @@
       "Retourkosten頁面『自行車退貨無費用但需自行安排運送』一句語意不明確，需向Giant NL客服部門確認實際執行方式",
       "Giant_NL_AGB_004相關的BW細部條號（6:230p sub f/g/i、6:230v lid 1）尚未經人工逐字核對官方法規原文",
       "AGB文件標註訂定於2016年10月，未確認是否為當前最新有效版本，建議定期向Giant官方確認AGB更新狀態"
+    ],
+    "France": [
+      "Giant FR CGV原文由使用者人工複製提供（自動化工具在本環境被Giant官網robots.txt/網路限制擋下無法直接抓取），建議正式上線前再由人工重新核對官網最新版本（CGV版本標註為2025/10/07）是否已更新",
+      "CGV全文未見客製化商品／衛生用品等『撤回權排除』專屬條款，與德國/荷蘭AGB不同；此類例外目前僅能依EU/DGCCRF通用規定推定適用，建議向Giant France法務確認是否有未公開的內部排除清單",
+      "Code de la consommation L.221-23條（價值減損原則）目前僅取得二手法律部落格（trustedshops.fr）的引述說明，Légifrance官方逐字條文因網站技術限制（403禁止自動化存取）尚未能直接取得查證，建議由人工瀏覽器訪問核對",
+      "CGV Article 9所引用之商品保固相關條文（L.217-4/5/9/12/16及民法典1641/1648條）雖已取得逐字文本，但屬於保固/瑕疵擔保主題，非本專題聚焦的撤回權/折舊/退貨排除/物流費用四大領域，暫不建chunk，僅記錄備查"
     ]
   }
 }

@@ -128,6 +128,7 @@ class VeloGuardHybridRetriever:
     _JURISDICTION_MAP: dict[str, set[str]] = {
         "DE": {"DE_EU", "EU", "COMMON_EU"},
         "NL": {"NL_EU", "EU", "COMMON_EU"},
+        "FR": {"FR_EU", "EU", "COMMON_EU"},
     }
 
     def __init__(
