@@ -1,32 +1,32 @@
 {
   "Germany::AGB": {
     "content_hash": "1980727eb6ef9531dcbaec3636e36184c70a8b79a990e41beb8c1746dde15f00",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Germany::ReturnPage": {
     "content_hash": "8843c471f2f41d98e93044f7c53a81a37c1a8ae9573d4eb4a971f516d0d1234f",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Germany::WithdrawalRightPage": {
     "content_hash": "5416de570878447bafff31b9ef43ec51c859eb5e67c36fb73c718323314dc904",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Germany::WithdrawalForm": {
     "content_hash": "8ac92186ba92ee5971311ce0e4ca319eb8aac90dd07d3b0857b957f8264ed02d",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Germany::DHL_Paket": {
     "content_hash": "fe0be565064a79282cbc9726f9e748a35a389776cccf32cabbc7ecf93de02b06",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Netherlands::ACM_Official": {
     "content_hash": "e219cee5822de28e77ad0a1e617a1c899eb066336793a5c754b336b9de08ca10",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Netherlands::BW_Boek6": {
@@ -36,12 +36,37 @@
   },
   "Germany::VAT_DE_Official": {
     "content_hash": "70c4988abd1273ff0f4d5bbd9eed26c1bd28a63cbedb29e8632d6c255e633e84",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:03:44Z"
   },
   "Netherlands::VAT_NL_Official": {
     "content_hash": "5a21afbd8ef914c67fb8a6c926908a19cb5a1eb1fc62a6532a0c6a5e7b379352",
-    "last_checked": "2026-10-05T16:25:09Z",
+    "last_checked": "2026-10-05T16:40:33Z",
     "last_changed": "2026-10-04T15:52:50Z"
+  },
+  "France::Giant_FR_CGV": {
+    "content_hash": "0f4b272fccf45ba3c9f8783d142a83327308d674f05f6a65298e676ee55ec471",
+    "last_checked": "2026-10-05T16:40:33Z",
+    "last_changed": "2026-10-05T16:40:33Z"
+  },
+  "France::ServicePublic_Retractation": {
+    "content_hash": "3704b102f3f7711184a89778db08778fbcd45e12d5e19326d4b9b4231c48f06c",
+    "last_checked": "2026-10-05T16:40:33Z",
+    "last_changed": "2026-10-05T16:40:33Z"
+  },
+  "France::DGCCRF_Retractation": {
+    "content_hash": "31e8fc2a808243f15ade1a6d8ff31a085f094bd39baf63e3d62fbf665aaf323a",
+    "last_checked": "2026-10-05T16:40:33Z",
+    "last_changed": "2026-10-05T16:40:33Z"
+  },
+  "France::DGCCRF_DelaisReflexion": {
+    "content_hash": "f5c672e9394a4eb36eb09278ebcfe92b712a1173bf7b75667a16d7d4fac59ce9",
+    "last_checked": "2026-10-05T16:40:33Z",
+    "last_changed": "2026-10-05T16:40:33Z"
+  },
+  "France::Economie_TVA_Taux": {
+    "content_hash": "c625be32b6c529e046863d03b5cafd9e1584bd8f11bc47fcb44df65de847d350",
+    "last_checked": "2026-10-05T16:40:33Z",
+    "last_changed": "2026-10-05T16:40:33Z"
   }
 }
