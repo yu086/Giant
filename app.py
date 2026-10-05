@@ -182,7 +182,9 @@ def is_internal_inconsistency_chunk(c: dict[str, Any]) -> bool:
     return bool(c.get("conflict_flag")) and not is_override_conflict_chunk(c)
 
 
-def render_override_conflict_card(c: dict[str, Any], result: Optional[RetrievalResult] = None) -> None:
+def render_override_conflict_card(
+    c: dict[str, Any], result: Optional[RetrievalResult] = None, rank: Optional[int] = None
+) -> None:
     """渲染「法律覆蓋（Override）」衝突警示卡片。
 
     適用對象：chunk 帶有完整override結構欄位
@@ -195,12 +197,17 @@ def render_override_conflict_card(c: dict[str, Any], result: Optional[RetrievalR
         result: 若此卡片是某次查詢排序結果的一部分，傳入對應的
             RetrievalResult 以顯示BM25/語意/綜合分數；若是「固定顯示、
             不受排序影響」的提醒區塊呼叫，則留空不顯示分數列。
+        rank: 若此卡片出現在查詢結果列表中（而非固定提醒區塊），傳入其
+            排名（例如第2名），標題會顯示「#2」，避免它在一整排有編號
+            的搜尋結果卡片中顯得像是無來由插入的獨立區塊；提醒區塊呼叫
+            則留空不顯示排名。
     """
     with st.container(border=True):
         # 把chunk_id/條款依據獨立放在最上面當作明顯的標題列，
         # 不要埋在st.error警示文字中間，讓使用者第一眼就能定位是哪一筆。
         topic_label = TOPIC_LABELS.get(c.get("topic"), c.get("topic", ""))
-        st.markdown(f"### 🚨 {topic_label}　｜　`{c['chunk_id']}`")
+        rank_prefix = f"#{rank}　" if rank is not None else ""
+        st.markdown(f"### 🚨 {rank_prefix}{topic_label}　｜　`{c['chunk_id']}`")
         st.caption(f"條款依據：{c.get('official_article_ref', '')}")
         st.error(
             "此條款「品牌字面規定」與「當地法定強制標準」不一致，"
@@ -236,7 +243,9 @@ def render_override_conflict_card(c: dict[str, Any], result: Optional[RetrievalR
             render_score_row(result)
 
 
-def render_internal_inconsistency_card(c: dict[str, Any], result: Optional[RetrievalResult] = None) -> None:
+def render_internal_inconsistency_card(
+    c: dict[str, Any], result: Optional[RetrievalResult] = None, rank: Optional[int] = None
+) -> None:
     """渲染「內部資料矛盾/待確認」提示卡片（黃色警示）。
 
     適用對象：chunk 帶有 `conflict_flag` 但沒有完整override結構
@@ -247,11 +256,13 @@ def render_internal_inconsistency_card(c: dict[str, Any], result: Optional[Retri
     Args:
         c: 原始chunk字典。
         result: 同 `render_override_conflict_card`，可選的排序結果分數。
+        rank: 同 `render_override_conflict_card`，可選的查詢結果排名。
     """
     with st.container(border=True):
         # 同override卡片，chunk_id/條款依據獨立放最上面當標題列。
         topic_label = TOPIC_LABELS.get(c.get("topic"), c.get("topic", ""))
-        st.markdown(f"### ⚠️ {topic_label}　｜　`{c['chunk_id']}`")
+        rank_prefix = f"#{rank}　" if rank is not None else ""
+        st.markdown(f"### ⚠️ {rank_prefix}{topic_label}　｜　`{c['chunk_id']}`")
         st.caption(f"條款依據：{c.get('official_article_ref', '')}")
         st.warning(f"資料一致性提示：{c.get('conflict_flag', '')}")
         st.markdown(f"**摘要：** {c.get('summary_zh', '')}")
@@ -281,9 +292,9 @@ def render_result_card(r: RetrievalResult, rank: int) -> None:
     """依chunk是否帶有衝突/覆蓋標記，分派到對應的卡片渲染函式。"""
     c = r.raw_chunk
     if is_override_conflict_chunk(c):
-        render_override_conflict_card(c, result=r)
+        render_override_conflict_card(c, result=r, rank=rank)
     elif is_internal_inconsistency_chunk(c):
-        render_internal_inconsistency_card(c, result=r)
+        render_internal_inconsistency_card(c, result=r, rank=rank)
     else:
         render_normal_card(r, rank)
 
