@@ -63,6 +63,12 @@ MARKETS: dict[str, dict[str, Any]] = {
         "vat_label": "BTW（荷蘭增值稅）",
         "depreciation_label": "Waardevermindering（價值減損）",
     },
+    "🇫🇷 法國 (France - 20% TVA)": {
+        "code": "FR",
+        "vat_rate": 0.20,
+        "vat_label": "TVA（法國增值稅）",
+        "depreciation_label": "Dépréciation（價值減損）",
+    },
 }
 
 # 品類篩選選項 -> 傳給 retriever.search(product_type=...) 的值
@@ -90,6 +96,7 @@ TOPIC_LABELS: dict[str, str] = {
 JURISDICTION_LABELS: dict[str, str] = {
     "DE_EU": "🇩🇪 德國",
     "NL_EU": "🇳🇱 荷蘭",
+    "FR_EU": "🇫🇷 法國",
     "EU": "🇪🇺 全歐盟共通",
     "COMMON_EU": "🇪🇺 全歐盟共通",
 }
@@ -175,7 +182,9 @@ def is_internal_inconsistency_chunk(c: dict[str, Any]) -> bool:
     return bool(c.get("conflict_flag")) and not is_override_conflict_chunk(c)
 
 
-def render_override_conflict_card(c: dict[str, Any], result: Optional[RetrievalResult] = None) -> None:
+def render_override_conflict_card(
+    c: dict[str, Any], result: Optional[RetrievalResult] = None, rank: Optional[int] = None
+) -> None:
     """渲染「法律覆蓋（Override）」衝突警示卡片。
 
     適用對象：chunk 帶有完整override結構欄位
@@ -188,12 +197,17 @@ def render_override_conflict_card(c: dict[str, Any], result: Optional[RetrievalR
         result: 若此卡片是某次查詢排序結果的一部分，傳入對應的
             RetrievalResult 以顯示BM25/語意/綜合分數；若是「固定顯示、
             不受排序影響」的提醒區塊呼叫，則留空不顯示分數列。
+        rank: 若此卡片出現在查詢結果列表中（而非固定提醒區塊），傳入其
+            排名（例如第2名），標題會顯示「#2」，避免它在一整排有編號
+            的搜尋結果卡片中顯得像是無來由插入的獨立區塊；提醒區塊呼叫
+            則留空不顯示排名。
     """
     with st.container(border=True):
         # 把chunk_id/條款依據獨立放在最上面當作明顯的標題列，
         # 不要埋在st.error警示文字中間，讓使用者第一眼就能定位是哪一筆。
         topic_label = TOPIC_LABELS.get(c.get("topic"), c.get("topic", ""))
-        st.markdown(f"### 🚨 {topic_label}　｜　`{c['chunk_id']}`")
+        rank_prefix = f"#{rank}　" if rank is not None else ""
+        st.markdown(f"### 🚨 {rank_prefix}{topic_label}　｜　`{c['chunk_id']}`")
         st.caption(f"條款依據：{c.get('official_article_ref', '')}")
         st.error(
             "此條款「品牌字面規定」與「當地法定強制標準」不一致，"
@@ -229,7 +243,9 @@ def render_override_conflict_card(c: dict[str, Any], result: Optional[RetrievalR
             render_score_row(result)
 
 
-def render_internal_inconsistency_card(c: dict[str, Any], result: Optional[RetrievalResult] = None) -> None:
+def render_internal_inconsistency_card(
+    c: dict[str, Any], result: Optional[RetrievalResult] = None, rank: Optional[int] = None
+) -> None:
     """渲染「內部資料矛盾/待確認」提示卡片（黃色警示）。
 
     適用對象：chunk 帶有 `conflict_flag` 但沒有完整override結構
@@ -240,11 +256,13 @@ def render_internal_inconsistency_card(c: dict[str, Any], result: Optional[Retri
     Args:
         c: 原始chunk字典。
         result: 同 `render_override_conflict_card`，可選的排序結果分數。
+        rank: 同 `render_override_conflict_card`，可選的查詢結果排名。
     """
     with st.container(border=True):
         # 同override卡片，chunk_id/條款依據獨立放最上面當標題列。
         topic_label = TOPIC_LABELS.get(c.get("topic"), c.get("topic", ""))
-        st.markdown(f"### ⚠️ {topic_label}　｜　`{c['chunk_id']}`")
+        rank_prefix = f"#{rank}　" if rank is not None else ""
+        st.markdown(f"### ⚠️ {rank_prefix}{topic_label}　｜　`{c['chunk_id']}`")
         st.caption(f"條款依據：{c.get('official_article_ref', '')}")
         st.warning(f"資料一致性提示：{c.get('conflict_flag', '')}")
         st.markdown(f"**摘要：** {c.get('summary_zh', '')}")
@@ -274,9 +292,9 @@ def render_result_card(r: RetrievalResult, rank: int) -> None:
     """依chunk是否帶有衝突/覆蓋標記，分派到對應的卡片渲染函式。"""
     c = r.raw_chunk
     if is_override_conflict_chunk(c):
-        render_override_conflict_card(c, result=r)
+        render_override_conflict_card(c, result=r, rank=rank)
     elif is_internal_inconsistency_chunk(c):
-        render_internal_inconsistency_card(c, result=r)
+        render_internal_inconsistency_card(c, result=r, rank=rank)
     else:
         render_normal_card(r, rank)
 
@@ -400,17 +418,16 @@ def render_vat_calculator(market: dict[str, Any]) -> None:
 
         st.markdown(f"**當前市場：** {market['code']}（VAT/BTW = {vat_rate:.0%}）")
 
-        c1, c2 = st.columns(2)
-        c1.metric("原訂單不含稅淨額", f"€{net_amount_original:,.2f}")
-        c2.metric(market["vat_label"], f"€{order_amount - net_amount_original:,.2f}")
-
-        c3, c4 = st.columns(2)
-        c3.metric(
+        # 側邊欄寬度有限，metric 卡片放進 2 欄 columns 容易把貨幣數值截斷
+        # （欄位太窄、長數字會被壓縮甚至省略），因此這裡改為單欄直向堆疊，
+        # 確保每個數值都能完整顯示。
+        st.metric("原訂單不含稅淨額", f"€{net_amount_original:,.2f}")
+        st.metric(market["vat_label"], f"€{order_amount - net_amount_original:,.2f}")
+        st.metric(
             f"折舊扣除（{market['depreciation_label']}）",
             f"-€{depreciation_amount:,.2f}",
         )
-        c4.metric("退款中對應VAT金額", f"€{refund_vat:,.2f}")
-
+        st.metric("退款中對應VAT金額", f"€{refund_vat:,.2f}")
         st.metric("💰 最終應退還買家款項", f"€{refund_gross:,.2f}")
 
 
@@ -476,7 +493,10 @@ def main() -> None:
     st.subheader("🔎 合規檢索查詢")
 
     if "query_text" not in st.session_state:
-        st.session_state.query_text = PRESET_QUERIES[0]["query"]
+        # 預設留白，不預先帶入任何情境文字——避免使用者誤以為框內已經是
+        # 「範例答案」，只要直接點搜尋就好，而忽略了要自己輸入真正的問題。
+        # 真正的引導文字改用下方 placeholder（淺灰色提示字）呈現。
+        st.session_state.query_text = ""
 
     st.caption("快速情境（點擊自動帶入查詢框）：")
     preset_cols = st.columns(len(PRESET_QUERIES))
@@ -484,9 +504,22 @@ def main() -> None:
         if col.button(preset["label"], use_container_width=True):
             st.session_state.query_text = preset["query"]
 
-    st.text_area("自然語言查詢", key="query_text", height=90)
+    st.text_area(
+        "自然語言查詢",
+        key="query_text",
+        height=160,
+        placeholder=(
+            "請在這裡描述您遇到的實際情況或想詢問的問題，系統會自動比對相關法規與政策。\n\n"
+            "例如：「3500歐元的E-Bike已經落地騎乘試用，消費者現在要求退貨，能扣多少折舊費？」\n"
+            "或：「客製化塗裝車款可以辦理退貨嗎？」"
+        ),
+    )
 
     search_clicked = st.button("🚀 開始合規檢索", type="primary")
+
+    if search_clicked and not st.session_state.query_text.strip():
+        st.warning("請先在上方查詢框輸入您的問題，或點擊上方的快速情境按鈕帶入範例。")
+        search_clicked = False
 
     # -----------------------------------------------------------------
     # 執行檢索並顯示結果（存入session_state，避免頁面互動時結果消失）
